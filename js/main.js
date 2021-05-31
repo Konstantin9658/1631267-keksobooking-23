@@ -1,30 +1,19 @@
-// Функция, для генерирования случайного целого числа в заданном диапозоне
-const ERROR = new Error('Введите корректные данные');
-function getRandomNumber(min, max) {
-  min = Math.floor(min);
-  max = Math.ceil(max);
-  // Проверяем данные на валидность
-  if (min >= 0 && max >= 0, min <= max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  } else {
-    throw ERROR;
-  }
-}
-
-getRandomNumber(1, 100);
-
 // Функция, для генерирования случайного дробного числа в заданном диапозоне
-
-function getRandomFractionalNumber(min, max, afterPoint) {
-  min = Math.floor(min);
-  max = Math.ceil(max);
-  const NUM = Math.pow(10, afterPoint);
+const getRandomNumber = function (min, max, precision) {
+  const num = Math.pow(10, precision);
   // Проверяем данные на валидность
-  if (min >= 0 && max >= 0, min <= max) {
-    return ~~((Math.random() * (max - min + 1) + min) * NUM) / NUM;
-  } else {
-    throw ERROR;
+  if (max <= min || max < 0 || min < 0) {
+    throw new Error('Ожидается max > min, min, max > 0');
   }
-}
+  // генерация случайного числа
+  return ~~((Math.random() * (max - min) + min) * num) / num;
+};
 
-getRandomFractionalNumber(1, 100, 3);
+const getRandomInt = function (min, max) {
+  // Переиспользуем функцию
+  getRandomNumber(min, max, 1);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+getRandomNumber(1.1, 1.2, 2);
+getRandomInt(1, 3);
