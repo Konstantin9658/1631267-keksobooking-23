@@ -17,18 +17,14 @@ const getRandomNumber = (min, max, precision) => {
   return (Math.random() * (max - min + 1) + min).toFixed(precision);
 };
 
-const getRandomInt = (min, max) => {
-  // Переиспользуем функцию
-  return getRandomNumber(min, max, 0);
-};
+// Переиспользуем функцию
+const getRandomInt = (min, max) => getRandomNumber(min, max, 0);
+
 // Функция для генерирования слачайного элемента из массива
-const getRandomArrayElement = array => {
-  return array[getRandomInt(0, array.length - 1)];
-};
+const getRandomArrayElement = (array) => array[getRandomInt(0, array.length - 1)];
+
 // Функция для генерирования случайного массива из массива :)
-const getRandomArray = array => {
-  return array.slice(0, getRandomInt(0, array.length - 1));
-};
+const getRandomArray = (array) => array.slice(0, getRandomInt(0, array.length - 1));
 
 const generateAdvert  = () => {
   const checkin = getRandomArrayElement(CHECKINS);
