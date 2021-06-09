@@ -8,7 +8,7 @@ const CHECKINS = ['12:00', '13:00', '14:00'];
 const FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 
 // Функция, для генерирования случайного дробного числа в заданном диапазоне
-const getRandomNumber = function (min, max, precision) {
+const getRandomNumber = (min, max, precision) => {
   // Проверяем данные на валидность
   if (max <= min || max < 0 || min < 0) {
     throw new Error('Ожидается max > min, min, max > 0');
@@ -17,22 +17,21 @@ const getRandomNumber = function (min, max, precision) {
   return (Math.random() * (max - min + 1) + min).toFixed(precision);
 };
 
-const getRandomInt = function (min, max) {
+const getRandomInt = (min, max) => {
   // Переиспользуем функцию
   return getRandomNumber(min, max, 0);
 };
 // Функция для генерирования слачайного элемента из массива
-const getRandomArrayElement = function (array) {
+const getRandomArrayElement = array => {
   return array[getRandomInt(0, array.length - 1)];
 };
 // Функция для генерирования случайного массива из массива :)
-const getRandomArray = function (array) {
+const getRandomArray = array => {
   return array.slice(0, getRandomInt(0, array.length - 1));
 };
 
-const generateAdvert  = function () {
-  const choose = getRandomInt(0, 2);// Не знаю правильно ли такое решение?!
-  //Я вроде у тебя спросил — ты что то не ответил) По другому никак не получается одно и то же время вытянуть
+const generateAdvert  = () => {
+  const checkin = getRandomArrayElement(CHECKINS);
   const location = {
     lat: getRandomNumber(35.65, 35.7, 5),
     lng: getRandomNumber(139.7, 139.8, 5),
@@ -47,9 +46,9 @@ const generateAdvert  = function () {
       price: getRandomInt(0, 100000),
       type: getRandomArrayElement(TYPES),
       rooms: getRandomInt(1, 3),
-      guests: CHECKINS[choose],
-      checkin: CHECKINS[choose],
-      checkout: getRandomArrayElement(CHECKINS),
+      guests: getRandomInt(1, 3),
+      checkin: checkin,
+      checkout: checkin,
       features: getRandomArray(FEATURES),
       description: 'Сдаётся номер в ',
       photos: getRandomArray(PHOTOS),
@@ -62,5 +61,3 @@ const generateAdvert  = function () {
 
 // eslint-disable-next-line no-unused-vars
 const similarAdvert = new Array(10).fill(null).map(() => generateAdvert());
-
-
