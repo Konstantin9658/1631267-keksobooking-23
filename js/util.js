@@ -15,6 +15,6 @@ const getRandomInt = (min, max) => getRandomNumber(min, max, 0);
 const getRandomArrayElement = (array) => array[getRandomInt(0, array.length - 1)];
 
 // Функция для генерирования случайного массива из массива :)
-const getRandomArray = (array) => array.slice(0, getRandomInt(0, array.length - 1));
+const getRandomArray = (array) => array.slice(getRandomInt(0, array.length - 1));
 
 export {getRandomNumber, getRandomInt, getRandomArrayElement, getRandomArray};
