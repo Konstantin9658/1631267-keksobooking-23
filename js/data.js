@@ -9,6 +9,7 @@ const TYPES = ['palace', 'flat', 'house', 'bungalow', 'hotel'];
 const CHECKINS = ['12:00', '13:00', '14:00'];
 const FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 
+
 const generateAdvert  = () => {
   const checkin = getRandomArrayElement(CHECKINS);
   const ratio = getRandomInt(1, 3);
@@ -21,25 +22,23 @@ const generateAdvert  = () => {
       avatar: `img/avatars/user0${getRandomInt(1, 8)}.png`,
     },
     offer: {
-      title: 'Почему другие используют Кексобукинг, а Вы — нет?',
+      title: 'Почему другие используют Кексобукинг, а вы — нет?',
       address: `${location.lng}, ${location.lat}`,
-      price: getRandomInt(0, 100000),
+      price: getRandomInt(0, 10000),
       type: getRandomArrayElement(TYPES),
       rooms: ratio,
       guests: ratio,
       checkin: checkin,
       checkout: checkin,
       features: getRandomArray(FEATURES),
-      description: 'Сдаётся номер в ',
+      description: 'Великолепная квартира-студия в центре Токио. Подходит как туристам, так и бизнесменам. Квартира полностью укомплектована и недавно отремонтирована.',
       photos: getRandomArray(PHOTOS),
     },
     location: {
-      location,
+      lat: location.lat,
+      lng: location.lng,
     },
   };
 };
 
-// eslint-disable-next-line no-unused-vars
-const similarAdvert = new Array(10).fill(null).map(() => generateAdvert());
-
-export {similarAdvert};
+export {generateAdvert};
