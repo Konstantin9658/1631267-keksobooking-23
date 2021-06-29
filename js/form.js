@@ -1,88 +1,81 @@
-const form = document.querySelector('.ad-form');
-const formTitle = form.querySelector('#title');
-const formAddress = form.querySelector('#address');
-const formSelectOfType = form.querySelector('#type');
-const formSelectOfPrice = form.querySelector('#price');
-const formCheckIn = form.querySelector('#timein');
-const formCheckOut= form.querySelector('#timeout');
-const formBlockTime = form.querySelector('.ad-form__element--time');
-const numberOfRooms = form.querySelector('#room_number');
-const numberOfSeats = form.querySelector('#capacity');
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
-const optionSeats = numberOfSeats.children;
-const optionSeatLastChild = numberOfSeats.lastElementChild;
+const MAX_NUMBER_OF_ROOMS = 100;
+const NOT_FOR_GUESTS = 0;
+const MIN_PRICE = {
+  bungalow: '0',
+  flat: '1000',
+  hotel: '3000',
+  house: '5000',
+  palace: '10000',
+};
+const form = document.querySelector('.ad-form');
+// const elementsForm = form.querySelectorAll('.ad-form__element');
+const titleField = form.querySelector('#title');
+const addressField = form.querySelector('#address');
+const typeField = form.querySelector('#type');
+const priceField = form.querySelector('#price');
+const checkinField = form.querySelector('#timein');
+const checkoutField= form.querySelector('#timeout');
+const timeField = form.querySelector('.ad-form__element--time');
+const roomsField = form.querySelector('#room_number');
+const guestsField = form.querySelector('#capacity');
 
-// Ура, выглядит конечно наверно для тебя слишком ущербно :D, но я сделал.
-// Только вот какая фигня, когда выбираешь 100 комнат, а потом выбрать 1 комната то
-// из соседнего поля пропадут места. Но если открыть селект то они там есть. Это не критично?
-numberOfRooms.addEventListener('change', (evt) => {
-  const value = evt.target.value;
-  for (const optionSeat of optionSeats) {
-    if (value !== optionSeat.value && value < optionSeat.value) {
-      optionSeat.setAttribute('disabled', 'disabled');
-      optionSeatLastChild.remove();
-    } else if (value === '100' && optionSeat.value !== '0') {
-      optionSeat.setAttribute('disabled', 'disabled');
-      numberOfSeats.appendChild(optionSeatLastChild);
-    } else {
-      optionSeat.removeAttribute('disabled', 'disabled');
-    }
+const validateRoomsAndGuests = () => {
+  const roomsSelected = parseInt(roomsField.value, 10);
+  const guestsSelected = parseInt(guestsField.value, 10);
+
+  if (roomsSelected === MAX_NUMBER_OF_ROOMS && guestsSelected !== NOT_FOR_GUESTS) {
+    guestsField.setCustomValidity(`Помещение на ${MAX_NUMBER_OF_ROOMS} комнат — не для гостей`);
+  } else if (roomsSelected !== MAX_NUMBER_OF_ROOMS && guestsSelected === NOT_FOR_GUESTS) {
+    guestsField.setCustomValidity('Помещение как минимум для одного гостя');
+  }  else if (guestsSelected > roomsSelected) {
+    guestsField.setCustomValidity('Гостей не может быть больше чем комнат');
+  } else {
+    guestsField.setCustomValidity('');
   }
-});
+  guestsField.reportValidity();
+};
+
+const onRoomsOrGuestsChanged = (evt) => validateRoomsAndGuests();
+roomsField.addEventListener('change', onRoomsOrGuestsChanged);
+guestsField.addEventListener('change', onRoomsOrGuestsChanged);
 
 const onCheckInOutValueChange = (evt) => {
   const newValue = evt.target.value;
-  formCheckIn.value = newValue;
-  formCheckOut.value = newValue;
+  checkinField.value = newValue;
+  checkoutField.value = newValue;
 };
 
-formBlockTime.addEventListener('change', onCheckInOutValueChange);
+timeField.addEventListener('change', onCheckInOutValueChange);
 
 // Валидируем заголовок объявления
-formTitle.addEventListener('input', () => {
-  const titleLength = formTitle.value.length;
+titleField.addEventListener('input', () => {
+  const titleLength = titleField.value.length;
   if (titleLength < MIN_TITLE_LENGTH) {
-    formTitle.setCustomValidity(`Минимум: ${MIN_TITLE_LENGTH} символов. Введите еще ${MIN_TITLE_LENGTH - titleLength} симв.`);
+    titleField.setCustomValidity(`Минимум: ${MIN_TITLE_LENGTH} символов. Введите еще ${MIN_TITLE_LENGTH - titleLength} симв.`);
   } else if (titleLength > MAX_TITLE_LENGTH) {
-    formTitle.setCustomValidity(`Максимум: ${MAX_TITLE_LENGTH} символов. Удалите ${titleLength - MAX_TITLE_LENGTH} симв.`);
+    titleField.setCustomValidity(`Максимум: ${MAX_TITLE_LENGTH} символов. Удалите ${titleLength - MAX_TITLE_LENGTH} симв.`);
   } else {
-    formTitle.setCustomValidity('');
+    titleField.setCustomValidity('');
   }
-  formTitle.reportValidity();
+  titleField.reportValidity();
 });
 
 // Валидируем адрес объявления
-formAddress.addEventListener('invalid', () => {
-  if (formAddress.validity.valueMissing) {
-    formAddress.setCustomValidity('Обязательное поле для заполнения!');
-  } else {
-    formAddress.setCustomValidity('');
-  }
+addressField.addEventListener('invalid', () => {
+  addressField.setCustomValidity(addressField.validity.valueMissing ? 'Обязательное поле для заполнения!' : '');
 });
 
 // Меняем минимальную допустимую цену на апартаменты, в зависимости от выбранного типа жилья
-formSelectOfType.addEventListener('change', () => {
-  switch (formSelectOfType.value) {
-    case 'bungalow' :
-      formSelectOfPrice.placeholder = 0;
-      formSelectOfPrice.min = 0;
-      break;
-    case 'flat' :
-      formSelectOfPrice.placeholder = 1000;
-      formSelectOfPrice.min = 1000;
-      break;
-    case 'hotel' :
-      formSelectOfPrice.placeholder = 3000;
-      formSelectOfPrice.min = 3000;
-      break;
-    case 'house' :
-      formSelectOfPrice.placeholder = 5000;
-      formSelectOfPrice.min = 5000;
-      break;
-    case 'palace' :
-      formSelectOfPrice.placeholder = 10000;
-      formSelectOfPrice.min = 10000;
-      break;
-  }
+typeField.addEventListener('change', () => {
+  priceField.placeholder = MIN_PRICE[typeField.value];
+  priceField.min = MIN_PRICE[typeField.value];
 });
+
+export {
+  guestsField,
+  roomsField,
+  validateRoomsAndGuests,
+  onRoomsOrGuestsChanged
+};
