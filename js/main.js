@@ -1,7 +1,9 @@
 import {generateAdvert} from './data.js';
 import {showPopup} from './popup.js';
-import './form.js';
+import {validateRoomsAndGuests} from './form.js';
+// import './form.js';
 
-// eslint-disable-next-line no-unused-vars
 const similarAdverts = new Array(10).fill(null).map(generateAdvert);
 showPopup(similarAdverts[0]);
+
+validateRoomsAndGuests();
