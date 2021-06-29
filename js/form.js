@@ -37,6 +37,8 @@ const validateRoomsAndGuests = () => {
   guestsField.reportValidity();
 };
 
+// Линт ругается на evt
+// eslint-disable-next-line no-unused-vars
 const onRoomsOrGuestsChanged = (evt) => validateRoomsAndGuests();
 roomsField.addEventListener('change', onRoomsOrGuestsChanged);
 guestsField.addEventListener('change', onRoomsOrGuestsChanged);
