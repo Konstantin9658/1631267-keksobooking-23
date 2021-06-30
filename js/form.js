@@ -2,24 +2,43 @@ const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
 const MAX_NUMBER_OF_ROOMS = 100;
 const NOT_FOR_GUESTS = 0;
-const MIN_PRICE = {
-  bungalow: '0',
-  flat: '1000',
-  hotel: '3000',
-  house: '5000',
-  palace: '10000',
+const OfferMinPrice = {
+  BUNGALOW: 0,
+  FLAT: 1000,
+  HOTEL: 3000,
+  HOUSE: 5000,
+  PALACE: 10000,
 };
-const form = document.querySelector('.ad-form');
-// const elementsForm = form.querySelectorAll('.ad-form__element');
-const titleField = form.querySelector('#title');
-const addressField = form.querySelector('#address');
-const typeField = form.querySelector('#type');
-const priceField = form.querySelector('#price');
-const checkinField = form.querySelector('#timein');
-const checkoutField= form.querySelector('#timeout');
-const timeField = form.querySelector('.ad-form__element--time');
-const roomsField = form.querySelector('#room_number');
-const guestsField = form.querySelector('#capacity');
+const adForm = document.querySelector('.ad-form');
+const elementsAdForm = adForm.querySelectorAll('.ad-form__element');
+const titleField = adForm.querySelector('#title');
+const addressField = adForm.querySelector('#address');
+const typeField = adForm.querySelector('#type');
+const priceField = adForm.querySelector('#price');
+const checkinField = adForm.querySelector('#timein');
+const checkoutField= adForm.querySelector('#timeout');
+const timeField = adForm.querySelector('.ad-form__element--time');
+const roomsField = adForm.querySelector('#room_number');
+const guestsField = adForm.querySelector('#capacity');
+
+// Блокируем форму и элементы формы
+const makeFormEnabled = (form, elements, disabled) => {
+  if (disabled) {
+    form.classList.add('ad-form--disabled');
+    for (const element of elements) {
+      element.setAttribute('disabled', 'disabled');
+    }
+  } else {
+    form.classList.remove('ad-form--disabled');
+    for (const element of elements) {
+      element.removeAttribute('disabled', 'disabled');
+    }
+  }
+};
+
+const makeAdFormEnabled = (disabled) => {
+  makeFormEnabled(adForm, elementsAdForm, disabled);
+};
 
 const validateRoomsAndGuests = () => {
   const roomsSelected = parseInt(roomsField.value, 10);
@@ -30,16 +49,15 @@ const validateRoomsAndGuests = () => {
   } else if (roomsSelected !== MAX_NUMBER_OF_ROOMS && guestsSelected === NOT_FOR_GUESTS) {
     guestsField.setCustomValidity('Помещение как минимум для одного гостя');
   }  else if (guestsSelected > roomsSelected) {
-    guestsField.setCustomValidity('Гостей не может быть больше чем комнат');
+    guestsField.setCustomValidity('Гостей не может быть больше чем комнат!');
   } else {
     guestsField.setCustomValidity('');
   }
   guestsField.reportValidity();
 };
 
-// Линт ругается на evt
-// eslint-disable-next-line no-unused-vars
-const onRoomsOrGuestsChanged = (evt) => validateRoomsAndGuests();
+const onRoomsOrGuestsChanged = () => validateRoomsAndGuests();
+
 roomsField.addEventListener('change', onRoomsOrGuestsChanged);
 guestsField.addEventListener('change', onRoomsOrGuestsChanged);
 
@@ -71,13 +89,10 @@ addressField.addEventListener('invalid', () => {
 
 // Меняем минимальную допустимую цену на апартаменты, в зависимости от выбранного типа жилья
 typeField.addEventListener('change', () => {
-  priceField.placeholder = MIN_PRICE[typeField.value];
-  priceField.min = MIN_PRICE[typeField.value];
+  priceField.placeholder = OfferMinPrice[typeField.value.toUpperCase()];
+  priceField.min = OfferMinPrice[typeField.value.toUpperCase()];
 });
 
-export {
-  guestsField,
-  roomsField,
-  validateRoomsAndGuests,
-  onRoomsOrGuestsChanged
-};
+validateRoomsAndGuests();
+
+export{makeFormEnabled, makeAdFormEnabled};
