@@ -22,7 +22,7 @@ const generateAdvert  = () => {
       avatar: `img/avatars/user0${getRandomInt(1, 8)}.png`,
     },
     offer: {
-      title: 'Почему другие используют Кексобукинг, а вы — нет?',
+      title: 'Милая, уютная квартирка в центре Токио',
       address: `${location.lng}, ${location.lat}`,
       price: getRandomInt(0, 10000),
       type: getRandomArrayElement(TYPES),
