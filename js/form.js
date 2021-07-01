@@ -22,7 +22,7 @@ const roomsField = adForm.querySelector('#room_number');
 const guestsField = adForm.querySelector('#capacity');
 
 // Блокируем форму и элементы формы
-const makeFormEnabled = (form, elements, disabled) => {
+const setFormDisabled = (form, elements, disabled) => {
   if (disabled) {
     form.classList.add('ad-form--disabled');
     for (const element of elements) {
@@ -36,8 +36,8 @@ const makeFormEnabled = (form, elements, disabled) => {
   }
 };
 
-const makeAdFormEnabled = (disabled) => {
-  makeFormEnabled(adForm, elementsAdForm, disabled);
+const setAdFormDisabled = (disabled) => {
+  setFormDisabled(adForm, elementsAdForm, disabled);
 };
 
 const validateRoomsAndGuests = () => {
@@ -95,4 +95,4 @@ typeField.addEventListener('change', () => {
 
 validateRoomsAndGuests();
 
-export{makeFormEnabled, makeAdFormEnabled};
+export{setFormDisabled, setAdFormDisabled};
