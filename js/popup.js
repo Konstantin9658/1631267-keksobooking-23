@@ -1,6 +1,5 @@
 const cardTemplate = document.querySelector('#card').content;
 const card = cardTemplate.querySelector('.popup');
-const map = document.querySelector('#map-canvas');
 
 const getOfferTypeName = (offerType) => {
   switch (offerType) {
@@ -30,28 +29,6 @@ const updateFeatures = (popupElement, features) => {
   }
 };
 
-// Блин не пойму, пытался решить проблему того, чтобы не скрывать лишний раз элементы,
-// а сразу отображать те которые сгенерировались в объекте, так вот почему отображается, в большинстве
-// случаев, 3 последних элемента и иногда добавляются первые три? Функция внизу)
-
-// const updateFeatures = (popupElement, features) => {
-//   const popupFeaturesList = popupElement.querySelector('.popup__features');
-//   const popupFeatures = popupFeaturesList.children;
-//   if (features.length === 0) {
-//     // Скрываем блок с фичами, если их нет вообще
-//     return popupFeaturesList.classList.add('hidden');
-//   }
-//   for (const popupFeature of popupFeatures) {
-//     for (const feature of features) {
-//       // Проверяем на наличие нужного модификатора
-//       if (popupFeature.classList.contains(`popup__feature--${feature}`)) {
-//         return;
-//       }
-//       popupFeature.remove();
-//     }
-//   }
-// };
-
 const updatePhotos = (popupElement, photos) => {
   const popupPhotosList = popupElement.querySelector('.popup__photos');
   const popupPhoto = popupPhotosList.querySelector('.popup__photo');
@@ -74,12 +51,13 @@ const showPopup = (advert) => {
   popupElement.querySelector('.popup__text--price').textContent = `${advert.offer.price} ₽/ночь`;
   popupElement.querySelector('.popup__type').textContent = getOfferTypeName(advert.offer.type);
   popupElement.querySelector('.popup__text--capacity').textContent = `${advert.offer.rooms} комнаты для ${advert.offer.guests} гостей`;
-  popupElement.querySelector('.popup__text--time').textContent = `Заезд после ${advert.offer.checkin}, выезд после ${advert.offer.checkout}`;
+  popupElement.querySelector('.popup__text--time').textContent = `Заезд после ${advert.offer.checkin}, выезд до ${advert.offer.checkout}`;
   updateFeatures(popupElement, advert.offer.features);
   popupElement.querySelector('.popup__description').textContent = advert.offer.description;
   updatePhotos(popupElement, advert.offer.photos);
   popupElement.querySelector('.popup__avatar').src = advert.author.avatar;
-  map.appendChild(popupElement);
+
+  return popupElement;
 };
 
 export {showPopup};

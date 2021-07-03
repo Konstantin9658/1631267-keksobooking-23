@@ -1,15 +1,17 @@
 import {generateAdvert} from './data.js';
-import {showPopup} from './popup.js';
 import './form.js';
 import {setAdFormDisabled} from './form.js';
-import {setMapFormDisabled} from './map.js';
-
-const similarAdverts = new Array(10).fill(null).map(generateAdvert);
-showPopup(similarAdverts[0]);
+import {setMapFormDisabled, getMapLoad, createMarker} from './map.js';
 
 const setPageDisabled = (disabled) => {
   setAdFormDisabled(disabled);
   setMapFormDisabled(disabled);
 };
 
-setPageDisabled(false);
+const addAdvertToMap = () => {
+  setPageDisabled(false);
+  const similarAdverts = new Array(10).fill(null).map(generateAdvert);
+  similarAdverts.forEach((advert) => createMarker(advert));
+};
+
+addAdvertToMap(getMapLoad);

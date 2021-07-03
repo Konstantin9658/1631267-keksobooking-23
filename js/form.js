@@ -93,6 +93,4 @@ typeField.addEventListener('change', () => {
   priceField.min = OfferMinPrice[typeField.value.toUpperCase()];
 });
 
-validateRoomsAndGuests();
-
-export{setFormDisabled, setAdFormDisabled};
+export{setFormDisabled, setAdFormDisabled, addressField};
