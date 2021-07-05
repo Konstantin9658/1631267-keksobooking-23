@@ -1,5 +1,10 @@
+import {sendData} from './api.js';
+import {showErrorMessage} from './status.js';
+import {mapMarker} from './map.js';
+
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
+const UP_TO_FIVE = 5;
 const MAX_NUMBER_OF_ROOMS = 100;
 const NOT_FOR_GUESTS = 0;
 const OfferMinPrice = {
@@ -10,6 +15,7 @@ const OfferMinPrice = {
   PALACE: 10000,
 };
 const adForm = document.querySelector('.ad-form');
+const buttonClear = adForm.querySelector('.ad-form__reset');
 const elementsAdForm = adForm.querySelectorAll('.ad-form__element');
 const titleField = adForm.querySelector('#title');
 const addressField = adForm.querySelector('#address');
@@ -93,4 +99,33 @@ typeField.addEventListener('change', () => {
   priceField.min = OfferMinPrice[typeField.value.toUpperCase()];
 });
 
-export{setFormDisabled, setAdFormDisabled, addressField};
+// Заполняем поле адреса
+addressField.value = `${mapMarker.getLatLng().lat}, ${mapMarker.getLatLng().lng}`;
+mapMarker.on('moveend', (evt) => {
+  const coordinateValues = evt.target.getLatLng();
+  addressField.value = `${Number(coordinateValues.lat.toFixed(UP_TO_FIVE))}, ${Number(coordinateValues.lng.toFixed(UP_TO_FIVE))}`;
+});
+
+const clearForm = () => {
+  adForm.reset();
+  mapMarker.setLatLng({
+    lat: 35.68169,
+    lng: 139.75388,
+  });
+  addressField.value = `${mapMarker.getLatLng().lat}, ${mapMarker.getLatLng().lng}`;
+};
+
+buttonClear.addEventListener('click', (evt) => {
+  evt.preventDefault();
+  clearForm();
+});
+
+const setUserFormSubmit = (onSuccess) => {
+  adForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    sendData(onSuccess, showErrorMessage, new FormData(evt.target));
+    clearForm();
+  });
+};
+
+export{setFormDisabled, setAdFormDisabled, setUserFormSubmit};
