@@ -14,7 +14,7 @@ const getOfferTypeName = (offerType) => {
 const updateFeatures = (popupElement, features) => {
   const popupFeaturesList = popupElement.querySelector('.popup__features');
   const popupFeatures = popupFeaturesList.children;
-  if (features.length === 0) {
+  if (!features) {
     // Скрываем блок с фичами, если их нет вообще
     return popupFeaturesList.classList.add('hidden');
   }
@@ -32,7 +32,7 @@ const updateFeatures = (popupElement, features) => {
 const updatePhotos = (popupElement, photos) => {
   const popupPhotosList = popupElement.querySelector('.popup__photos');
   const popupPhoto = popupPhotosList.querySelector('.popup__photo');
-  if (photos.length === 0) {
+  if (!photos) {
     // Скрываем блок с фото, если их нет
     return popupPhotosList.classList.add('hidden');
   }
