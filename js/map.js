@@ -1,7 +1,6 @@
-import {setFormDisabled, addressField} from './form.js';
+import {setFormDisabled} from './form.js';
 import {showPopup} from './popup.js';
 
-const UP_TO_FIVE = 5;
 const mapForm = document.querySelector('.map__filters');
 const elementsMapForm = mapForm.querySelectorAll('.map__filter');
 
@@ -12,22 +11,24 @@ const setMapFormDisabled = (disabled) => {
 
 const map = L.map('map-canvas');
 
-map.setView({
-  lat: 35.68169,
-  lng: 139.75388,
-}, 10);
-
-const getMapLoad = () => {
+const getMapLoad = (fn) => {
   map.on('load', () => {
+    fn();
   });
+
+  map.setView({
+    lat: 35.68169,
+    lng: 139.75388,
+  }, 10);
+
+  L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    },
+  ).addTo(map);
 };
 
-L.tileLayer(
-  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  },
-).addTo(map);
 
 const newMarkerIcon = L.icon ({
   iconUrl: '../img/main-pin.svg',
@@ -56,29 +57,24 @@ mapMarker.addTo(map);
 
 const markerAdGroup = L.layerGroup().addTo(map);
 
-const createMarker = (advert) => {
-  L.marker(
-    {
-      lat: advert.location.lat,
-      lng: advert.location.lng,
-    },
-    {
-      icon: adIcon,
-    },
-  ).addTo(markerAdGroup)
-    .bindPopup(
-      showPopup(advert),
+const createMarker = (adverts) => {
+  adverts.forEach((advert) => {
+    L.marker(
       {
-        keepInView: true,
+        lat: advert.location.lat,
+        lng: advert.location.lng,
       },
-    );
+      {
+        icon: adIcon,
+      },
+    ).addTo(markerAdGroup)
+      .bindPopup(
+        showPopup(advert),
+        {
+          keepInView: true,
+        },
+      );
+  });
 };
 
-// Заполняем поле адреса
-addressField.value = `${mapMarker.getLatLng().lat}, ${mapMarker.getLatLng().lng}`;
-mapMarker.on('moveend', (evt) => {
-  const coordinateValues = evt.target.getLatLng();
-  addressField.value = `${Number(coordinateValues.lat.toFixed(UP_TO_FIVE))}, ${Number(coordinateValues.lng.toFixed(UP_TO_FIVE))}`;
-});
-
-export {setMapFormDisabled, getMapLoad, createMarker};
+export {setMapFormDisabled, getMapLoad, mapMarker, createMarker};
