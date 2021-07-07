@@ -1,10 +1,10 @@
-import {sendData} from './api.js';
-import {showErrorMessage} from './status.js';
-import {mapMarker} from './map.js';
+import {sendAdvert} from './api.js';
+import {showSuccessMessage, showErrorMessage} from './status.js';
+import {COORDINATE_DOWNTOWN_TOKYO, mapMarker} from './map.js';
 
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
-const UP_TO_FIVE = 5;
+const COORDINATE_PRECISION = 5;
 const MAX_NUMBER_OF_ROOMS = 100;
 const NOT_FOR_GUESTS = 0;
 const OfferMinPrice = {
@@ -15,8 +15,7 @@ const OfferMinPrice = {
   PALACE: 10000,
 };
 const adForm = document.querySelector('.ad-form');
-const buttonClear = adForm.querySelector('.ad-form__reset');
-const elementsAdForm = adForm.querySelectorAll('.ad-form__element');
+const adFormElements = adForm.querySelectorAll('.ad-form__element');
 const titleField = adForm.querySelector('#title');
 const addressField = adForm.querySelector('#address');
 const typeField = adForm.querySelector('#type');
@@ -26,6 +25,7 @@ const checkoutField= adForm.querySelector('#timeout');
 const timeField = adForm.querySelector('.ad-form__element--time');
 const roomsField = adForm.querySelector('#room_number');
 const guestsField = adForm.querySelector('#capacity');
+const resetButton = adForm.querySelector('.ad-form__reset');
 
 // Блокируем форму и элементы формы
 const setFormDisabled = (form, elements, disabled) => {
@@ -43,7 +43,7 @@ const setFormDisabled = (form, elements, disabled) => {
 };
 
 const setAdFormDisabled = (disabled) => {
-  setFormDisabled(adForm, elementsAdForm, disabled);
+  setFormDisabled(adForm, adFormElements, disabled);
 };
 
 const validateRoomsAndGuests = () => {
@@ -99,33 +99,35 @@ typeField.addEventListener('change', () => {
   priceField.min = OfferMinPrice[typeField.value.toUpperCase()];
 });
 
+const setMarkerDowntown = () => `${mapMarker.getLatLng().lat}, ${mapMarker.getLatLng().lng}`;
+
 // Заполняем поле адреса
-addressField.value = `${mapMarker.getLatLng().lat}, ${mapMarker.getLatLng().lng}`;
+addressField.value = setMarkerDowntown();
+
 mapMarker.on('moveend', (evt) => {
   const coordinateValues = evt.target.getLatLng();
-  addressField.value = `${Number(coordinateValues.lat.toFixed(UP_TO_FIVE))}, ${Number(coordinateValues.lng.toFixed(UP_TO_FIVE))}`;
+  const truncCoordinate = (coordinate) => Number(coordinate.toFixed(COORDINATE_PRECISION));
+  const formatCoordinates = ({lat, lng}) => `${truncCoordinate(lat)}, ${truncCoordinate(lng)}`;
+
+  addressField.value = formatCoordinates(coordinateValues);
 });
 
-const clearForm = () => {
+const resetForm = () => {
   adForm.reset();
-  mapMarker.setLatLng({
-    lat: 35.68169,
-    lng: 139.75388,
-  });
-  addressField.value = `${mapMarker.getLatLng().lat}, ${mapMarker.getLatLng().lng}`;
+  mapMarker.setLatLng(COORDINATE_DOWNTOWN_TOKYO);
+  addressField.value = setMarkerDowntown();
 };
 
-buttonClear.addEventListener('click', (evt) => {
+resetButton.addEventListener('click', (evt) => {
   evt.preventDefault();
-  clearForm();
+  resetForm();
 });
 
-const setUserFormSubmit = (onSuccess) => {
+const setFormSubmitHandler = () => {
   adForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
-    sendData(onSuccess, showErrorMessage, new FormData(evt.target));
-    clearForm();
+    sendAdvert(showSuccessMessage, showErrorMessage, new FormData(evt.target));
   });
 };
 
-export{setFormDisabled, setAdFormDisabled, setUserFormSubmit};
+export{setFormDisabled, setAdFormDisabled, setFormSubmitHandler, resetForm};

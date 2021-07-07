@@ -1,6 +1,10 @@
 import {setFormDisabled} from './form.js';
 import {showPopup} from './popup.js';
 
+const COORDINATE_DOWNTOWN_TOKYO = {
+  lat: 35.68169,
+  lng: 139.75388,
+};
 const mapForm = document.querySelector('.map__filters');
 const elementsMapForm = mapForm.querySelectorAll('.map__filter');
 
@@ -11,15 +15,12 @@ const setMapFormDisabled = (disabled) => {
 
 const map = L.map('map-canvas');
 
-const getMapLoad = (fn) => {
+const initMap = (onMapLoad) => {
   map.on('load', () => {
-    fn();
+    onMapLoad();
   });
 
-  map.setView({
-    lat: 35.68169,
-    lng: 139.75388,
-  }, 10);
+  map.setView(COORDINATE_DOWNTOWN_TOKYO, 10);
 
   L.tileLayer(
     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -43,10 +44,7 @@ const adIcon = L.icon({
 });
 
 const mapMarker = L.marker(
-  {
-    lat: 35.68169,
-    lng: 139.75388,
-  },
+  COORDINATE_DOWNTOWN_TOKYO,
   {
     draggable: true,
     icon: newMarkerIcon,
@@ -57,7 +55,7 @@ mapMarker.addTo(map);
 
 const markerAdGroup = L.layerGroup().addTo(map);
 
-const createMarker = (adverts) => {
+const renderAdvertMarkers = (adverts) => {
   adverts.forEach((advert) => {
     L.marker(
       {
@@ -77,4 +75,4 @@ const createMarker = (adverts) => {
   });
 };
 
-export {setMapFormDisabled, getMapLoad, mapMarker, createMarker};
+export {setMapFormDisabled, initMap, mapMarker, COORDINATE_DOWNTOWN_TOKYO, renderAdvertMarkers};

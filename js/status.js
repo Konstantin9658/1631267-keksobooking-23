@@ -1,9 +1,8 @@
+import {resetForm} from './form.js';
 import {isEscEvent} from './util.js';
 
-const successMessageTemplate = document.querySelector('#success').content;
-const errorMessageTemplate = document.querySelector('#error').content;
-const errorMessage = errorMessageTemplate.querySelector('.error');
-const successMessage = successMessageTemplate.querySelector('.success');
+const successMessageTemplate = document.querySelector('#success').content.querySelector('.success');
+const errorMessageTemplate = document.querySelector('#error').content.querySelector('.error');
 
 const showAlert = (message) => {
   const alertContainer = document.createElement('div');
@@ -21,25 +20,34 @@ const showAlert = (message) => {
   document.body.appendChild(alertContainer);
 };
 
-const showStatus = (status) => {
-  document.body.insertAdjacentElement('beforeend', status);
+const closeMessage = (statusMessage, inCorrect) => {
+  statusMessage.remove();
+  if (inCorrect) {
+    resetForm();
+  }
+};
+
+const showMessage = (statusMessage, inCorrect) => {
+  document.body.insertAdjacentElement('beforeend', statusMessage);
   document.addEventListener('click', () => {
-    status.remove();
-  });
+    closeMessage(statusMessage, inCorrect);
+  }, {once: true});
   document.addEventListener('keydown', (evt) => {
-    evt.preventDefault();
-    isEscEvent(evt, status);
-  });
+    if (isEscEvent(evt)) {
+      evt.preventDefault();
+      closeMessage(statusMessage, inCorrect);
+    }
+  },  {once: true});
 };
 
 const showSuccessMessage = () => {
-  const messageStatus = successMessage.cloneNode(true);
-  showStatus(messageStatus);
+  const successMessage = successMessageTemplate.cloneNode(true);
+  showMessage(successMessage, true);
 };
 
-const showErrorMessage = () => {
-  const messageStatus = errorMessage.cloneNode(true);
-  showStatus(messageStatus);
+const showErrorMessage = (inCorrect) => {
+  const errorMessage = errorMessageTemplate.cloneNode(true);
+  showMessage(errorMessage, !inCorrect);
 };
 
 export {showAlert, showSuccessMessage, showErrorMessage};

@@ -1,7 +1,9 @@
 import {showAlert} from './status.js';
 
-const getData = (onSuccess) => {
-  fetch('https://23.javascript.pages.academy/keksobooking/data')
+const SERVER_URL = 'https://23.javascript.pages.academy/keksobooking';
+
+const fetchAdverts = (onSuccess) => {
+  fetch(`${SERVER_URL}/data`)
     .then((response) => {
       if (response.ok) {
         return response.json();
@@ -11,28 +13,28 @@ const getData = (onSuccess) => {
     .then((adverts) => {
       onSuccess(adverts);
     })
-    .catch((error) => {
-      showAlert(`"${error}" При загрузке данных произошла ошибка. Попробуйте повторить позднее.`);
+    .catch(() => {
+      showAlert('При загрузке данных произошла ошибка. Попробуйте повторить позднее.');
     });
 };
 
-const sendData = (onSuccess, onFail, formdata) => {
-  fetch('https://23.javascript.pages.academy/keksobooking',
+const sendAdvert = (onSuccess, onError, advert) => {
+  fetch(SERVER_URL,
     {
       method: 'POST',
-      body: formdata,
+      body: advert,
     },
   )
     .then((response) => {
       if (response.ok) {
         onSuccess();
       } else {
-        onFail();
+        onError();
       }
     })
     .catch(() => {
-      onFail();
+      onError();
     });
 };
 
-export {getData, sendData};
+export {fetchAdverts, sendAdvert};

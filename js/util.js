@@ -18,10 +18,6 @@ const getRandomArrayElement = (array) => array[getRandomInt(0, array.length - 1)
 const getRandomArray = (array) => array.slice(getRandomInt(0, array.length - 1));
 
 // Функция для закрытия уведомления клавишей
-const isEscEvent = (evt, status) => {
-  if (evt.key === 'Escape' || evt.key === 'Esc') {
-    status.remove();
-  }
-};
+const isEscEvent = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
 
 export {getRandomNumber, getRandomInt, getRandomArrayElement, getRandomArray, isEscEvent};
