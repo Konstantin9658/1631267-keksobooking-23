@@ -1,17 +1,21 @@
-import {generateAdvert} from './data.js';
 import './form.js';
-import {setAdFormDisabled} from './form.js';
-import {setMapFormDisabled, getMapLoad, createMarker} from './map.js';
+import {setAdFormDisabled, setFormSubmitHandler} from './form.js';
+import {setMapFormDisabled, initMap, renderAdvertMarkers} from './map.js';
+import './status.js';
+import {fetchAdverts} from './api.js';
 
-const setPageDisabled = (disabled) => {
+const setSomethingDisabled = (disabled) => {
   setAdFormDisabled(disabled);
   setMapFormDisabled(disabled);
 };
 
-const addAdvertToMap = () => {
-  setPageDisabled(false);
-  const similarAdverts = new Array(10).fill(null).map(generateAdvert);
-  similarAdverts.forEach((advert) => createMarker(advert));
-};
+setSomethingDisabled(true);
 
-addAdvertToMap(getMapLoad);
+initMap(() => {
+  setSomethingDisabled(false);
+  fetchAdverts(renderAdvertMarkers);
+  // Не совсем понял про это => //Возможность отправки формы не должна происходить раньше,
+  // чем все приложение перейдет в активное состояние
+  // То есть она должна появляться после того как загрузится карта и соответсвенно ее нужно переместить сюда?
+  setFormSubmitHandler();
+});

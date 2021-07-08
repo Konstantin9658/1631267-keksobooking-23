@@ -1,7 +1,10 @@
-import {setFormDisabled, addressField} from './form.js';
+import {setFormDisabled} from './form.js';
 import {showPopup} from './popup.js';
 
-const UP_TO_FIVE = 5;
+const COORDINATE_DOWNTOWN_TOKYO = {
+  lat: 35.68169,
+  lng: 139.75388,
+};
 const mapForm = document.querySelector('.map__filters');
 const elementsMapForm = mapForm.querySelectorAll('.map__filter');
 
@@ -12,22 +15,21 @@ const setMapFormDisabled = (disabled) => {
 
 const map = L.map('map-canvas');
 
-map.setView({
-  lat: 35.68169,
-  lng: 139.75388,
-}, 10);
-
-const getMapLoad = () => {
+const initMap = (onMapLoad) => {
   map.on('load', () => {
+    onMapLoad();
   });
+
+  map.setView(COORDINATE_DOWNTOWN_TOKYO, 10);
+
+  L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    },
+  ).addTo(map);
 };
 
-L.tileLayer(
-  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  },
-).addTo(map);
 
 const newMarkerIcon = L.icon ({
   iconUrl: '../img/main-pin.svg',
@@ -42,10 +44,7 @@ const adIcon = L.icon({
 });
 
 const mapMarker = L.marker(
-  {
-    lat: 35.68169,
-    lng: 139.75388,
-  },
+  COORDINATE_DOWNTOWN_TOKYO,
   {
     draggable: true,
     icon: newMarkerIcon,
@@ -56,29 +55,24 @@ mapMarker.addTo(map);
 
 const markerAdGroup = L.layerGroup().addTo(map);
 
-const createMarker = (advert) => {
-  L.marker(
-    {
-      lat: advert.location.lat,
-      lng: advert.location.lng,
-    },
-    {
-      icon: adIcon,
-    },
-  ).addTo(markerAdGroup)
-    .bindPopup(
-      showPopup(advert),
+const renderAdvertMarkers = (adverts) => {
+  adverts.forEach((advert) => {
+    L.marker(
       {
-        keepInView: true,
+        lat: advert.location.lat,
+        lng: advert.location.lng,
       },
-    );
+      {
+        icon: adIcon,
+      },
+    ).addTo(markerAdGroup)
+      .bindPopup(
+        showPopup(advert),
+        {
+          keepInView: true,
+        },
+      );
+  });
 };
 
-// Заполняем поле адреса
-addressField.value = `${mapMarker.getLatLng().lat}, ${mapMarker.getLatLng().lng}`;
-mapMarker.on('moveend', (evt) => {
-  const coordinateValues = evt.target.getLatLng();
-  addressField.value = `${Number(coordinateValues.lat.toFixed(UP_TO_FIVE))}, ${Number(coordinateValues.lng.toFixed(UP_TO_FIVE))}`;
-});
-
-export {setMapFormDisabled, getMapLoad, createMarker};
+export {setMapFormDisabled, initMap, mapMarker, COORDINATE_DOWNTOWN_TOKYO, renderAdvertMarkers};
