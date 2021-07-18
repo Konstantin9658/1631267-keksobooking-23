@@ -19,9 +19,7 @@ const showAlert = (message) => {
   document.body.appendChild(alertContainer);
 };
 
-const closeMessage = (statusMessage) => {
-  statusMessage.remove();
-};
+const closeMessage = (message) => message.remove();
 
 const showMessage = (statusMessage) => {
   document.body.insertAdjacentElement('beforeend', statusMessage);
@@ -34,14 +32,8 @@ const showMessage = (statusMessage) => {
   },  {once: true});
 };
 
-const showSuccessMessage = () => {
-  const successMessage = successMessageTemplate.cloneNode(true);
-  showMessage(successMessage);
-};
+const showSuccessMessage = () => showMessage(successMessageTemplate.cloneNode(true));
 
-const showErrorMessage = () => {
-  const errorMessage = errorMessageTemplate.cloneNode(true);
-  showMessage(errorMessage);
-};
+const showErrorMessage = () => showMessage(errorMessageTemplate.cloneNode(true));
 
 export {showAlert, showSuccessMessage, showErrorMessage};

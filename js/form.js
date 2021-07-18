@@ -1,7 +1,4 @@
-// import {sendAdvert} from './api.js';
-import {showSuccessMessage, showErrorMessage} from './status.js';
-import { sendAdvert } from './api.js';
-import {COORDINATE_DOWNTOWN_TOKYO, mapMarker, updateMap} from './map.js';
+import {LOCATION_TOKYO, mapMarker} from './map.js';
 
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
@@ -102,12 +99,12 @@ typeField.addEventListener('change', () => {
 
 const getCoordinatesFromMarker = () => `${mapMarker.getLatLng().lat}, ${mapMarker.getLatLng().lng}`;
 
-// Заполняем поле адреса
-addressField.value = getCoordinatesFromMarker();
-
 const truncCoordinate = (coordinate) => Number(coordinate.toFixed(COORDINATE_PRECISION));
 
 const formatCoordinates = ({lat, lng}) => `${truncCoordinate(lat)}, ${truncCoordinate(lng)}`;
+
+// Заполняем поле адреса
+addressField.value = getCoordinatesFromMarker();
 
 mapMarker.on('moveend', (evt) => {
   const coordinateValues = evt.target.getLatLng();
@@ -116,28 +113,20 @@ mapMarker.on('moveend', (evt) => {
 
 const resetForm = () => {
   adForm.reset();
-  mapMarker.setLatLng(COORDINATE_DOWNTOWN_TOKYO);
+  mapMarker.setLatLng(LOCATION_TOKYO);
   addressField.value = getCoordinatesFromMarker();
 };
 
-const showMessageAndResetForm = () => {
-  showSuccessMessage();
+resetButton.addEventListener('click', (evt) => {
+  evt.preventDefault();
   resetForm();
-  updateMap();
-};
-
-const formResetHandler = () => {
-  resetButton.addEventListener('click', (evt) => {
-    evt.preventDefault();
-    resetForm();
-  });
-};
+});
 
 const setUserFormSubmit = (onSuccess) => {
   adForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
-    sendAdvert(new FormData(evt.target), onSuccess(), showErrorMessage);
+    onSuccess(new FormData(evt.target));
   });
 };
 
-export {setFormEnabled, setAdFormEnabled, setUserFormSubmit, formResetHandler, showMessageAndResetForm};
+export {setFormEnabled, setAdFormEnabled, setUserFormSubmit, resetForm};

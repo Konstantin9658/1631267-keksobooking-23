@@ -2,10 +2,11 @@ import {filterAds, setListenerChangesInFilter} from './filter.js';
 import {setFormEnabled} from './form.js';
 import {showPopup} from './popup.js';
 
-const COORDINATE_DOWNTOWN_TOKYO = {
+const LOCATION_TOKYO = {
   lat: 35.68169,
   lng: 139.75388,
 };
+const MAP__ZOOM = 10;
 const mapFormFilters = document.querySelector('.map__filters');
 const elementsMapForm = mapFormFilters.querySelectorAll('.map__filter');
 
@@ -16,9 +17,9 @@ const setMapFormEnabled = (enabled) => {
 const map = L.map('map-canvas');
 
 const initMap = (onMapLoad) => {
-  map.on('load', () => onMapLoad());
+  map.on('load', onMapLoad);
 
-  map.setView(COORDINATE_DOWNTOWN_TOKYO, 10);
+  map.setView(LOCATION_TOKYO, MAP__ZOOM);
 
   L.tileLayer(
     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -42,7 +43,7 @@ const adIcon = L.icon({
 });
 
 const mapMarker = L.marker(
-  COORDINATE_DOWNTOWN_TOKYO,
+  LOCATION_TOKYO,
   {
     draggable: true,
     icon: newMarkerIcon,
@@ -81,8 +82,8 @@ const showAdMarkers = (adverts) => {
 
 const updateMap = (adverts) => {
   mapFormFilters.reset();
-  map.setView(COORDINATE_DOWNTOWN_TOKYO, 10);
-  mapMarker.setLatLng(COORDINATE_DOWNTOWN_TOKYO);
+  map.setView(LOCATION_TOKYO, 10);
+  mapMarker.setLatLng(LOCATION_TOKYO);
   renderAdvertMarkers(filterAds(adverts));
 };
 
@@ -90,7 +91,7 @@ export {
   setMapFormEnabled,
   initMap,
   mapMarker,
-  COORDINATE_DOWNTOWN_TOKYO,
+  LOCATION_TOKYO,
   showAdMarkers,
   updateMap,
   renderAdvertMarkers

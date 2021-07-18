@@ -4,24 +4,25 @@ import {debounce} from './util.js';
 const MAX_ADS = 10;
 const MIN_PRICE = 10000;
 const MAX_PRICE = 50000;
-const TIMEOUT_DELAY = 500;
+const FILTER_DELAY = 500;
 
-const filterHousingType = document.querySelector('#housing-type');
-const filterPrice = document.querySelector('#housing-price');
-const filterRooms = document.querySelector('#housing-rooms');
-const filterGuests = document.querySelector('#housing-guests');
-const mapFeatures = document.querySelector('.map__features');
-const filterFeatures = mapFeatures.querySelectorAll('.map__checkbox');
+const mapForm = document.querySelector('.map__filters');
+const typeFilter = mapForm.querySelector('#housing-type');
+const priceFilter = mapForm.querySelector('#housing-price');
+const roomsFilter = mapForm.querySelector('#housing-rooms');
+const guestsFilter = mapForm.querySelector('#housing-guests');
+const mapFeatures = mapForm.querySelector('.map__features');
+const featureFilters = mapFeatures.querySelectorAll('.map__checkbox');
 
-const anyFilterValue = (filter) => filter.value === 'any';
+const isAnyFilterValue = (filter) => filter.value === 'any';
 
-const isTypeOfHousingInAdMatches = (advert) => anyFilterValue(filterHousingType) || advert.offer.type === filterHousingType.value;
+const isAdTypeMatched = (advert) => isAnyFilterValue(typeFilter) || advert.offer.type === typeFilter.value;
 
-const isPriceInAdMatch = (advert) => {
-  if (anyFilterValue(filterPrice)) {
+const isAdPriceMatched = (advert) => {
+  if (isAnyFilterValue(priceFilter)) {
     return true;
   }
-  switch (filterPrice.value) {
+  switch (priceFilter.value) {
     case 'low' : return advert.offer.price <= MIN_PRICE;
     case 'middle' : return advert.offer.price >= MIN_PRICE && advert.offer.price <= MAX_PRICE;
     case 'high' : return advert.offer.price >= MAX_PRICE;
@@ -29,13 +30,13 @@ const isPriceInAdMatch = (advert) => {
   }
 };
 
-const isNumberOfRoomsInAdMatch = (advert) => anyFilterValue(filterRooms) || advert.offer.rooms === parseInt(filterRooms.value, 10);
+const isAdNumberOfRoomsMatched = (advert) => isAnyFilterValue(roomsFilter) || advert.offer.rooms === parseInt(roomsFilter.value, 10);
 
-const isNumberOfGuestsInAdMatch = (advert) => anyFilterValue(filterGuests) || advert.offer.guests === parseInt(filterGuests.value, 10);
+const isAdNumberOfGuestsMatched = (advert) => isAnyFilterValue(guestsFilter) || advert.offer.guests === parseInt(guestsFilter.value, 10);
 
-const isFeaturesInAdMatch = (advert) => {
+const isAdFeaturesMatched = (advert) => {
   const adFeatures = advert.offer.features || [];
-  for (const filterFeature of filterFeatures) {
+  for (const filterFeature of featureFilters) {
     if (filterFeature.checked && !adFeatures.includes(filterFeature.value)) {
       return false;
     }
@@ -44,11 +45,11 @@ const isFeaturesInAdMatch = (advert) => {
 };
 
 const filters = [
-  isTypeOfHousingInAdMatches,
-  isPriceInAdMatch,
-  isNumberOfRoomsInAdMatch,
-  isNumberOfGuestsInAdMatch,
-  isFeaturesInAdMatch,
+  isAdTypeMatched,
+  isAdPriceMatched,
+  isAdNumberOfRoomsMatched,
+  isAdNumberOfGuestsMatched,
+  isAdFeaturesMatched,
 ];
 
 const isAdMatch = (advert) => filters.every((filter) => filter(advert));
@@ -64,16 +65,16 @@ const filterAds = (adverts) => {
   return filteredAds;
 };
 
-const trackChangeInFilter = (adverts) => debounce(() => renderAdvertMarkers(filterAds(adverts)), TIMEOUT_DELAY);
+const createFilterDelay = (adverts) => debounce(() => renderAdvertMarkers(filterAds(adverts)), FILTER_DELAY);
 
 const setListenerChangesInFilter = (adverts) => {
-  const filterChangeHandler =  trackChangeInFilter(adverts);
+  const filterChangeHandler = createFilterDelay(adverts);
 
-  filterHousingType.addEventListener('change', filterChangeHandler);
-  filterPrice.addEventListener('change', filterChangeHandler);
-  filterRooms.addEventListener('change', filterChangeHandler);
-  filterGuests.addEventListener('change', filterChangeHandler);
-  mapFeatures.addEventListener('change', filterChangeHandler);
+  typeFilter.addEventListener('change', filterChangeHandler(adverts));
+  priceFilter.addEventListener('change', filterChangeHandler(adverts));
+  roomsFilter.addEventListener('change', filterChangeHandler(adverts));
+  guestsFilter.addEventListener('change', filterChangeHandler(adverts));
+  mapFeatures.addEventListener('change', filterChangeHandler(adverts));
 };
 
 export {setListenerChangesInFilter, filterAds};

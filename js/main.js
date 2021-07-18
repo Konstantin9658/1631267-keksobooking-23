@@ -1,8 +1,11 @@
 import './form.js';
-import {setAdFormEnabled, setUserFormSubmit, showMessageAndResetForm} from './form.js';
-import {setMapFormEnabled, initMap, showAdMarkers} from './map.js';
+import {resetForm, setAdFormEnabled, setUserFormSubmit} from './form.js';
+import {setMapFormEnabled, initMap, showAdMarkers, updateMap} from './map.js';
 import './status.js';
-import {fetchAdverts} from './api.js';
+import {fetchAdverts, sendAdvert} from './api.js';
+import { showErrorMessage, showSuccessMessage } from './status.js';
+
+let adverts = [];
 
 const setPageEnabled = (enabled) => {
   setAdFormEnabled(enabled);
@@ -13,9 +16,16 @@ setPageEnabled(false);
 
 initMap(() => {
   setPageEnabled(true);
-  setUserFormSubmit(showMessageAndResetForm);
+  setUserFormSubmit((newAd) => {
+    sendAdvert(newAd, () => {
+      updateMap(adverts);
+      resetForm();
+      showSuccessMessage();
+    }, showErrorMessage);
+  });
   fetchAdverts((advertsFromServer) => {
-    showAdMarkers(advertsFromServer);
+    adverts = advertsFromServer;
+    showAdMarkers(adverts);
   });
 });
 
