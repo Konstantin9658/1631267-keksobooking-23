@@ -17,7 +17,15 @@ const getRandomArrayElement = (array) => array[getRandomInt(0, array.length - 1)
 // Функция для генерирования случайного массива из массива :)
 const getRandomArray = (array) => array.slice(getRandomInt(0, array.length - 1));
 
-// Функция для закрытия уведомления клавишей
+const debounce = (callback, timeout) => {
+  let timeoutId;
+
+  return () => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(callback, timeout);
+  };
+};
+
 const isEscEvent = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
 
-export {getRandomNumber, getRandomInt, getRandomArrayElement, getRandomArray, isEscEvent};
+export {getRandomNumber, getRandomInt, getRandomArrayElement, getRandomArray, isEscEvent, debounce};

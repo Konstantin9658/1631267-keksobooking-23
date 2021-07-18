@@ -18,7 +18,7 @@ const fetchAdverts = (onSuccess) => {
     });
 };
 
-const sendAdvert = (onSuccess, onError, advert) => {
+const sendAdvert = (advert, onSuccess, onError) => {
   fetch(SERVER_URL,
     {
       method: 'POST',
