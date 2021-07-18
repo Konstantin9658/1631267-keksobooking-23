@@ -70,11 +70,11 @@ const createFilterDelay = (adverts) => debounce(() => renderAdvertMarkers(filter
 const setListenerChangesInFilter = (adverts) => {
   const filterChangeHandler = createFilterDelay(adverts);
 
-  typeFilter.addEventListener('change', filterChangeHandler(adverts));
-  priceFilter.addEventListener('change', filterChangeHandler(adverts));
-  roomsFilter.addEventListener('change', filterChangeHandler(adverts));
-  guestsFilter.addEventListener('change', filterChangeHandler(adverts));
-  mapFeatures.addEventListener('change', filterChangeHandler(adverts));
+  typeFilter.addEventListener('change', filterChangeHandler);
+  priceFilter.addEventListener('change', filterChangeHandler);
+  roomsFilter.addEventListener('change', filterChangeHandler);
+  guestsFilter.addEventListener('change', filterChangeHandler);
+  mapFeatures.addEventListener('change', filterChangeHandler);
 };
 
 export {setListenerChangesInFilter, filterAds};
