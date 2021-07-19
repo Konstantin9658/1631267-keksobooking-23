@@ -1,26 +1,25 @@
-import {setFormDisabled} from './form.js';
+import {filterAds, setListenerChangesInFilter} from './filter.js';
+import {setFormEnabled} from './form.js';
 import {showPopup} from './popup.js';
 
-const COORDINATE_DOWNTOWN_TOKYO = {
+const LOCATION_TOKYO = {
   lat: 35.68169,
   lng: 139.75388,
 };
-const mapForm = document.querySelector('.map__filters');
-const elementsMapForm = mapForm.querySelectorAll('.map__filter');
+const MAP__ZOOM = 10;
+const mapFormFilters = document.querySelector('.map__filters');
+const elementsMapForm = mapFormFilters.querySelectorAll('.map__filter');
 
-const setMapFormDisabled = (disabled) => {
-  // Переиспользуем функцию для блокировки формы и ее элементов
-  setFormDisabled(mapForm, elementsMapForm, disabled);
+const setMapFormEnabled = (enabled) => {
+  setFormEnabled(mapFormFilters, elementsMapForm, enabled);
 };
 
 const map = L.map('map-canvas');
 
 const initMap = (onMapLoad) => {
-  map.on('load', () => {
-    onMapLoad();
-  });
+  map.on('load', onMapLoad);
 
-  map.setView(COORDINATE_DOWNTOWN_TOKYO, 10);
+  map.setView(LOCATION_TOKYO, MAP__ZOOM);
 
   L.tileLayer(
     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -44,7 +43,7 @@ const adIcon = L.icon({
 });
 
 const mapMarker = L.marker(
-  COORDINATE_DOWNTOWN_TOKYO,
+  LOCATION_TOKYO,
   {
     draggable: true,
     icon: newMarkerIcon,
@@ -56,6 +55,7 @@ mapMarker.addTo(map);
 const markerAdGroup = L.layerGroup().addTo(map);
 
 const renderAdvertMarkers = (adverts) => {
+  markerAdGroup.clearLayers();
   adverts.forEach((advert) => {
     L.marker(
       {
@@ -75,4 +75,24 @@ const renderAdvertMarkers = (adverts) => {
   });
 };
 
-export {setMapFormDisabled, initMap, mapMarker, COORDINATE_DOWNTOWN_TOKYO, renderAdvertMarkers};
+const showAdMarkers = (adverts) => {
+  renderAdvertMarkers(filterAds(adverts));
+  setListenerChangesInFilter(adverts);
+};
+
+const updateMap = (adverts) => {
+  mapFormFilters.reset();
+  map.setView(LOCATION_TOKYO, 10);
+  mapMarker.setLatLng(LOCATION_TOKYO);
+  renderAdvertMarkers(filterAds(adverts));
+};
+
+export {
+  setMapFormEnabled,
+  initMap,
+  mapMarker,
+  LOCATION_TOKYO,
+  showAdMarkers,
+  updateMap,
+  renderAdvertMarkers
+};

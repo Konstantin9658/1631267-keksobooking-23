@@ -1,4 +1,3 @@
-import {resetForm} from './form.js';
 import {isEscEvent} from './util.js';
 
 const successMessageTemplate = document.querySelector('#success').content.querySelector('.success');
@@ -20,34 +19,21 @@ const showAlert = (message) => {
   document.body.appendChild(alertContainer);
 };
 
-const closeMessage = (statusMessage, inCorrect) => {
-  statusMessage.remove();
-  if (inCorrect) {
-    resetForm();
-  }
-};
+const closeMessage = (message) => message.remove();
 
-const showMessage = (statusMessage, inCorrect) => {
+const showMessage = (statusMessage) => {
   document.body.insertAdjacentElement('beforeend', statusMessage);
-  document.addEventListener('click', () => {
-    closeMessage(statusMessage, inCorrect);
-  }, {once: true});
+  document.addEventListener('click', () => closeMessage(statusMessage), {once: true});
   document.addEventListener('keydown', (evt) => {
     if (isEscEvent(evt)) {
       evt.preventDefault();
-      closeMessage(statusMessage, inCorrect);
+      closeMessage(statusMessage);
     }
   },  {once: true});
 };
 
-const showSuccessMessage = () => {
-  const successMessage = successMessageTemplate.cloneNode(true);
-  showMessage(successMessage, true);
-};
+const showSuccessMessage = () => showMessage(successMessageTemplate.cloneNode(true));
 
-const showErrorMessage = (inCorrect) => {
-  const errorMessage = errorMessageTemplate.cloneNode(true);
-  showMessage(errorMessage, !inCorrect);
-};
+const showErrorMessage = () => showMessage(errorMessageTemplate.cloneNode(true));
 
 export {showAlert, showSuccessMessage, showErrorMessage};
