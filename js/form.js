@@ -1,4 +1,4 @@
-import {LOCATION_TOKYO, mapMarker} from './map.js';
+import {TOKYO_LOCATION, mapMarker} from './map.js';
 
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
@@ -113,7 +113,7 @@ mapMarker.on('moveend', (evt) => {
 
 const resetForm = () => {
   adForm.reset();
-  mapMarker.setLatLng(LOCATION_TOKYO);
+  mapMarker.setLatLng(TOKYO_LOCATION);
   addressField.value = getCoordinatesFromMarker();
 };
 
